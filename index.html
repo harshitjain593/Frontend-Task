@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOGO Product Selection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: white;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin: 20px 0;
+            color: #ff6b81;
+            font-size: 24px;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .header::before, .header::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 25%;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        .header::before {
+            left: 0;
+        }
+
+        .header::after {
+            right: 0;
+        }
+
+        .product-box {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-box.active {
+            border-color: #ff6b81;
+            background-color: #fff9fa;
+      
+        }
+
+        .product-box.active .box-content {
+            display: block;
+        }
+
+        .box-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .unit-selection {
+            display: flex;
+            align-items: center;
+        }
+
+        .radio-container {
+            margin-right: 15px;
+        }
+
+        .custom-radio {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .product-box.active .custom-radio {
+            border-color: #ff6b81;
+        }
+
+        .product-box.active .custom-radio::after {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #ff6b81;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .unit-label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .discount-badge {
+            background-color: #ff6b81;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+
+        .price-container {
+            text-align: right;
+        }
+
+        .current-price {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .original-price {
+            color: #999;
+            text-decoration: line-through;
+            font-size: 14px;
+        }
+
+        .box-content {
+            display: none;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .option-row {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .option-label {
+            width: 30px;
+            margin-right: 10px;
+            color: #666;
+        }
+
+        .option-selects {
+            display: flex;
+            flex-grow: 1;
+            gap: 10px;
+        }
+
+        .option-selects select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            background-color: white;
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #ff6b81;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+            border-bottom-left-radius: 5px;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .delivery {
+            color: #ff6b81;
+        }
+
+        .total {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .add-to-cart {
+            display: block;
+            width: 100%;
+            background-color: #ff6b81;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .add-to-cart:hover {
+            background-color: #ff5a70;
+        }
+
+        .powered-by {
+            text-align: right;
+            color: #999;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">YAY! It's BOGO</div>
+
+    <div class="product-box" id="box1">
+        <div class="box-header">
+            <div class="unit-selection">
+                <div class="radio-container">
+                    <span class="custom-radio"></span>
+                    <input type="radio" name="unit-select" id="unit1" style="display: none;">
+                </div>
+                <label for="unit1" class="unit-label">1 Unit</label>
+                <span class="discount-badge">10% Off</span>
+            </div>
+            <div class="price-container">
+                <div class="current-price">$10.00 USD</div>
+                <div class="original-price">$24.00 USD</div>
+            </div>
+        </div>
+        <div class="box-content">
+            <div class="option-row">
+                <span class="option-label">#1</span>
+                <div class="option-selects">
+                    <select class="size-select">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                    <select class="color-select">
+                        <option value="Black">Black</option>
+                        <option value="White">White</option>
+                        <option value="Red">Red</option>
+                        <option value="Blue">Blue</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-box active" id="box2">
+        <div class="popular-badge">MOST POPULAR</div>
+        <div class="box-header">
+            <div class="unit-selection">
+                <div class="radio-container">
+                    <span class="custom-radio"></span>
+                    <input type="radio" name="unit-select" id="unit2" checked style="display: none;">
+                </div>
+                <label for="unit2" class="unit-label">2 Unit</label>
+                <span class="discount-badge">20% Off</span>
+            </div>
+            <div class="price-container">
+                <div class="current-price">$18.00 USD</div>
+                <div class="original-price">$24.00 USD</div>
+            </div>
+        </div>
+        <div class="box-content">
+            <div class="option-row">
+                <span class="option-label">#1</span>
+                <div class="option-selects">
+                    <select class="size-select">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                    <select class="color-select">
+                        <option value="Black">Black</option>
+                        <option value="White">White</option>
+                        <option value="Red">Red</option>
+                        <option value="Blue">Blue</option>
+                    </select>
+                </div>
+            </div>
+            <div class="option-row">
+                <span class="option-label">#2</span>
+                <div class="option-selects">
+                    <select class="size-select">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                    <select class="color-select">
+                        <option value="Colour">Colour</option>
+                        <option value="Black">Black</option>
+                        <option value="White">White</option>
+                        <option value="Red">Red</option>
+                        <option value="Blue">Blue</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="product-box" id="box3">
+        <div class="box-header">
+            <div class="unit-selection">
+                <div class="radio-container">
+                    <span class="custom-radio"></span>
+                    <input type="radio" name="unit-select" id="unit3" style="display: none;">
+                </div>
+                <label for="unit3" class="unit-label">3 Unit</label>
+                <span class="discount-badge">30% Off</span>
+            </div>
+            <div class="price-container">
+                <div class="current-price">$24.00 USD</div>
+                <div class="original-price">$24.00 USD</div>
+            </div>
+        </div>
+        <div class="box-content">
+            <div class="option-row">
+                <span class="option-label">#1</span>
+                <div class="option-selects">
+                    <select class="size-select">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                    <select class="color-select">
+                        <option value="Black">Black</option>
+                        <option value="White">White</option>
+                        <option value="Red">Red</option>
+                        <option value="Blue">Blue</option>
+                    </select>
+                </div>
+            </div>
+            <div class="option-row">
+                <span class="option-label">#2</span>
+                <div class="option-selects">
+                    <select class="size-select">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                    <select class="color-select">
+                        <option value="Black">Black</option>
+                        <option value="White">White</option>
+                        <option value="Red">Red</option>
+                        <option value="Blue">Blue</option>
+                    </select>
+                </div>
+            </div>
+            <div class="option-row">
+                <span class="option-label">#3</span>
+                <div class="option-selects">
+                    <select class="size-select">
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                    <select class="color-select">
+                        <option value="Black">Black</option>
+                        <option value="White">White</option>
+                        <option value="Red">Red</option>
+                        <option value="Blue">Blue</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="delivery">Free Delivery</div>
+        <div class="total">Total : $18.00 USD</div>
+    </div>
+
+    <button class="add-to-cart">
+        <span>+</span> Add to Cart
+    </button>
+
+    <div class="powered-by">@ Powered by Pumper</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const boxes = document.querySelectorAll('.product-box');
+            const radioInputs = document.querySelectorAll('input[type="radio"]');
+            const totalElement = document.querySelector('.total');
+            
+            // Prices for each option
+            const prices = {
+                'box1': 10.00,
+                'box2': 18.00,
+                'box3': 24.00
+            };
+
+            // Function to update the total price
+            function updateTotal(boxId) {
+                const price = prices[boxId];
+                totalElement.textContent = `Total : $${price.toFixed(2)} USD`;
+            }
+
+            // Set initial total based on the active box
+            boxes.forEach(box => {
+                if (box.classList.contains('active')) {
+                    updateTotal(box.id);
+                }
+            });
+
+            // Add click event to each box
+            boxes.forEach(box => {
+                box.addEventListener('click', function() {
+                    // Remove active class from all boxes
+                    boxes.forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked box
+                    this.classList.add('active');
+                    
+                    // Find the radio input in this box and check it
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    
+                    // Update the total price
+                    updateTotal(this.id);
+                });
+            });
+
+            // Handle radio button clicks
+            radioInputs.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        // Remove active class from all boxes
+                        boxes.forEach(box => box.classList.remove('active'));
+                        
+                        // Add active class to the parent box of this radio
+                        const parentBox = this.closest('.product-box');
+                        parentBox.classList.add('active');
+                        
+                        // Update the total price
+                        updateTotal(parentBox.id);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
